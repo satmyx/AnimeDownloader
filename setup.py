@@ -10,13 +10,11 @@ import sys
 import os
 
 DEPS = [
-    "selenium",
-    "chromedriver-autoinstall",
-    "yt-dlp",
-    "tqdm",
-    "questionary",
-    "requests",
-    "beautifulsoup4",
+    "seleniumbase",      # Automation navigateur avec UC (undetected-chromedriver)
+    "yt-dlp",            # Extraction vidéo des players
+    "tqdm",              # Barres de progression
+    "questionary",       # Menus interactifs
+    "curl_cffi",         # Requêtes HTTP avec browser impersonation
 ]
 
 def install(package):
@@ -48,14 +46,22 @@ def main():
     print(f"\n{'━'*46}")
     print(f"  ✅  {len(ok)} installé(s) avec succès")
 
+    # Créer les dossiers nécessaires
+    os.makedirs("logs/sessions", exist_ok=True)
+    print(f"  📁  Dossiers créés : logs/, logs/sessions/")
+
     if fail:
-        print(f"  ❌  {len(fail)} échec(s) : {', '.join(fail)}")
+        print(f"\n  ❌  {len(fail)} échec(s) : {', '.join(fail)}")
         print(f"\n  Réessaie manuellement :")
         for f in fail:
             print(f"    py -m pip install {f}")
     else:
         print(f"\n  🎉  Tout est prêt ! Lance maintenant :")
         print(f"      py voiranime_dl_v2.py")
+        print(f"\n  📖  Commandes disponibles :")
+        print(f"      py voiranime_dl_v2.py              → Nouveau téléchargement")
+        print(f"      py voiranime_dl_v2.py --resume     → Reprendre une session")
+        print(f"      py voiranime_dl_v2.py --list-sessions → Liste des sessions")
 
     print(f"{'━'*46}\n")
 
