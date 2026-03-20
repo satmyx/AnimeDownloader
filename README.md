@@ -1,8 +1,4 @@
-# VoirAnime Downloader V2 - Jellyfin Edition (Modular)
-
-## 🎯 Architecture Modulaire
-
-Le code a été refactorisé et organisé en dossiers pour être plus maintenable et extensible.
+# VoirAnime Downloader V2 - Jellyfin Edition
 
 ### Structure du Projet
 
@@ -77,11 +73,11 @@ Téléchargement des épisodes :
 - `process_episode()` : Traite un épisode (essaie tous les players)
 - `download_season()` : Télécharge une saison complète avec workers parallèles
 
-### `progress.py` ⭐ **NOUVEAU**
-Système de monitoring avancé :
+### `progress.py`
+Système de monitoring
 
 #### `ProgressTracker`
-Barre de progression sophistiquée avec :
+Barre de progression avec :
 - **Barre globale** : Progression totale sur toutes les saisons
 - **Barre par saison** : Progression de la saison en cours
 - **ETA dynamique** : Temps restant estimé basé sur vitesse réelle
@@ -101,17 +97,6 @@ Barre de progression sophistiquée avec :
 #### `SimpleProgressTracker`
 Version fallback simple si tqdm n'est pas installé.
 
-## 🚀 Fonctionnalités Modifiées
-
-### 1. Monitoring Amélioré
-- **Avant** : Une seule barre de progression tqdm simple
-- **Après** : Double barre (globale + saison) avec statistiques en temps réel
-
-### 2. Modularité
-- **Avant** : Code monolithique de 500+ lignes dans un seul fichier
-- **Après** : 8 modules spécialisés, maintenables indépendamment
-
-### 3. Statistiques Finales
 Le résumé final affiche maintenant :
 ```
 🎉  Terminé !
@@ -141,7 +126,7 @@ DELAY_BETWEEN_EPISODES = (1, 3)    # Délai aléatoire entre épisodes (secondes
 
 ## 📝 Utilisation
 
-Aucun changement pour l'utilisateur final :
+Aucun changement pour l'utilisateurv:
 
 ```bash
 py voiranime_dl_v2.py
@@ -151,15 +136,9 @@ Ajout de la V2.1 :
 - ✅ Meilleur monitoring (barres de progression détaillées)
 - ✅ Code plus propre et maintenable
 - ✅ Statistiques avancées (vitesse, ETA, tailles)
-- ✅ Architecture modulaire extensible
 
-## 🔮 Prochaines Améliorations Possibles
+## 🔮 Realised with claude and whats the problem ? (Need optimizations but its working and thats the original goal)
 
-Avec cette architecture modulaire, il est maintenant facile d'ajouter :
-- ✨ Configuration via fichier JSON/YAML
-- ✨ Système de retry automatique
-- ✨ Sauvegarde/reprise de progression
-- ✨ Validation d'intégrité des fichiers
-- ✨ Mode CLI avec arguments
-- ✨ Tests unitaires par module
-- ✨ Cache des recherches
+![Higuruma](https://media1.tenor.com/m/NzFYBVKRsR8AAAAd/higuruma-hiromi.gif)
+
+Give a 💫
