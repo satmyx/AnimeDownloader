@@ -137,7 +137,7 @@ Ajout de la V2.1 :
 - ✅ Code plus propre et maintenable
 - ✅ Statistiques avancées (vitesse, ETA, tailles)
 
-## 🔮 Realised with claude and whats the problem ? (Need optimizations but its working and thats the original goal)
+## 🔮 Made with Claude. Needs optimizations, but it works — and that was the point.
 
 ![Higuruma](https://media1.tenor.com/m/NzFYBVKRsR8AAAAd/higuruma-hiromi.gif)
 
