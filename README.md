@@ -1,4 +1,4 @@
-# VoirAnime Downloader V2 - Jellyfin Edition
+# 🕷️ VoirAnime Downloader V2 - Jellyfin Edition
 
 ### Structure du Projet
 
