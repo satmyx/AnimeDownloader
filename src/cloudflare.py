@@ -29,7 +29,7 @@ def get_cf_clearance():
     driver = Driver(uc=True, headless=False)  # TOUJOURS visible pour CF
     try:
         # Reconnexion UC : attend que CF laisse passer
-        driver.uc_open_with_reconnect("https://v6.voiranime.com/", reconnect_time=5)
+        driver.uc_open_with_reconnect("https://voir-anime.to/", reconnect_time=5)
 
         # Tente de cliquer sur le Turnstile si présent
         try:

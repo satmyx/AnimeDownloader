@@ -28,8 +28,8 @@ HEADLESS_MODE = True  # Mettre les navigateurs en arrière-plan (invisible)
 # ─────────────────────────────────────────
 # URLs
 # ─────────────────────────────────────────
-BASE_URL = "https://v6.voiranime.com/anime"
-AJAX_URL = "https://v6.voiranime.com/wp-admin/admin-ajax.php"
+BASE_URL = "https://voir-anime.to/anime"
+AJAX_URL = "https://voir-anime.to/wp-admin/admin-ajax.php"
 
 # ─────────────────────────────────────────
 # USER AGENT

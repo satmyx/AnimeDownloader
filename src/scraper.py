@@ -43,8 +43,8 @@ def search_anime(query, langue):
     headers = {
         "User-Agent": cloudflare.get_user_agent(),
         "X-Requested-With": "XMLHttpRequest",
-        "Referer": "https://v6.voiranime.com/",
-        "Origin": "https://v6.voiranime.com",
+        "Referer": "https://voir-anime.to/",
+        "Origin": "https://voir-anime.to",
     }
 
     try:
