@@ -16,8 +16,8 @@ LOG_FILE = os.path.join(LOG_DIR, "voiranime_dl.log")
 # ─────────────────────────────────────────
 # TÉLÉCHARGEMENT
 # ─────────────────────────────────────────
-MAX_WORKERS = 4  # Nombre de workers parallèles
-DELAY_PAGE = 15  # Timeout pour le chargement des pages
+MAX_WORKERS = 6  # Nombre de workers parallèles
+DELAY_PAGE = 10  # Timeout pour le chargement des pages
 
 # ─────────────────────────────────────────
 # NAVIGATEURS

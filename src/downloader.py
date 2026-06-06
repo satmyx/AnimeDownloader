@@ -10,16 +10,22 @@ import random
 import subprocess
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from src.config import OUTPUT_DIR, MAX_WORKERS, DELAY_BETWEEN_EPISODES
+from src.config import OUTPUT_DIR, MAX_WORKERS, DELAY_BETWEEN_EPISODES, BASE_URL
 from src.utils import log, sanitize, zpad
 from src.scraper import get_all_player_urls
+from src.cloudflare import get_cookies, get_user_agent
 
 # ─────────────────────────────────────────
 # YT-DLP
 # ─────────────────────────────────────────
 def try_download(player_url, output_path):
-    """Tente de télécharger un épisode avec yt-dlp"""
+    """Tente de télécharger un épisode avec yt-dlp (avec cookies + entêtes)"""
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    
+    # Récupérer les cookies Cloudflare et User-Agent
+    cf_cookies = get_cookies()
+    cf_ua = get_user_agent()
+    
     cmd = [
         sys.executable, "-m", "yt_dlp",
         "--no-warnings", "--quiet", "--no-playlist",
@@ -27,8 +33,24 @@ def try_download(player_url, output_path):
         "-f", "bestvideo+bestaudio/best",
         "--merge-output-format", "mkv",
         "-o", output_path,
-        player_url
+        "--user-agent", cf_ua,
+        "--add-header", f"Referer:{BASE_URL}/",
+        "--retries", "3",
+        "--fragment-retries", "3",
+        "--socket-timeout", "30",
     ]
+    
+    # Ajouter les cookies en header direct (pas de fichier, pas de cookiejar bug)
+    if cf_cookies:
+        # Les cookies les plus importants : cf_clearance en premier
+        priority = ['cf_clearance', '__cf_bm', 'cf_chl_opt']
+        sorted_cookies = sorted(cf_cookies.items(),
+                                key=lambda x: (x[0] not in priority, x[0]))
+        cookie_str = "; ".join(f"{k}={v}" for k, v in sorted_cookies)
+        cmd += ["--add-header", f"Cookie:{cookie_str}"]
+    
+    cmd.append(player_url)
+    
     result = subprocess.run(cmd, capture_output=True, text=True)
     return result.returncode == 0, result.stderr
 
@@ -71,6 +93,8 @@ def process_episode(driver_pool, ep_num, ep_url, output_path, anime_clean, saiso
     
     log(f"  📋  [{label}] {len(players)} player(s) disponible(s), essai séquentiel...")
     
+    MAX_RETRIES_PER_PLAYER = 3  # Nombre de tentatives par player
+    
     for i, player_url in enumerate(players, start=1):
         # Identifier le type de player depuis l'URL
         player_type = "inconnu"
@@ -94,8 +118,31 @@ def process_episode(driver_pool, ep_num, ep_url, output_path, anime_clean, saiso
         if progress_callback:
             progress_callback('downloading', ep_num, label, i, len(players))
         
-        success, stderr = try_download(player_url, output_path)
-        if success:
+        # Essayer le player avec retries
+        player_success = False
+        last_stderr = ""
+        for attempt in range(1, MAX_RETRIES_PER_PLAYER + 1):
+            if attempt > 1:
+                wait = attempt * 5  # 5s, 10s, 15s de délai entre les retries
+                log(f"  🔄  [{label}] Retry {attempt}/{MAX_RETRIES_PER_PLAYER} ({player_type}) dans {wait}s...")
+                time.sleep(wait)
+            
+            success, stderr = try_download(player_url, output_path)
+            last_stderr = stderr
+            
+            if success:
+                player_success = True
+                break
+            else:
+                # Afficher l'erreur seulement à la première tentative
+                if attempt == 1:
+                    log(f"  ⚠️  [{label}] {player_type} tentative {attempt} KO — {stderr[:120]}", "warning")
+                else:
+                    log(f"  ⚠️  [{label}] {player_type} tentative {attempt} KO — {stderr[:80]}", "warning")
+                if os.path.exists(output_path):
+                    os.remove(output_path)
+        
+        if player_success:
             # Obtenir la taille du fichier téléchargé
             file_size = os.path.getsize(output_path) if os.path.exists(output_path) else 0
             log(f"  ✅  [{label}] Succès avec {player_type} (player {i}/{len(players)})")
@@ -106,9 +153,7 @@ def process_episode(driver_pool, ep_num, ep_url, output_path, anime_clean, saiso
                 session.update_episode_completed(saison, ep_num)
             return True, file_size
         else:
-            log(f"  ⚠️  [{label}] {player_type} KO (player {i}/{len(players)}) — {stderr[:100]}", "warning")
-            if os.path.exists(output_path):
-                os.remove(output_path)
+            log(f"  ⚠️  [{label}] {player_type} KO après {MAX_RETRIES_PER_PLAYER} tentatives (player {i}/{len(players)})", "warning")
             # Continuer avec le player suivant
             if i < len(players):
                 log(f"  ➡️   [{label}] Essai du player suivant...")
